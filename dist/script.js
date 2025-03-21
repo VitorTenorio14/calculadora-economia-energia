@@ -1,55 +1,40 @@
-"use strict";
-/*function calcularEconomia() {
-    const valorContaInput = document.getElementById("valorConta");
-    const cooperativaSelect = document.getElementById("cooperativa");
-    const resultadoOutput = document.getElementById("resultado");
-    const valorConta = parseFloat(valorContaInput.value);
-    const desconto = parseFloat(cooperativaSelect.selectedOptions[0].getAttribute("data-desconto") || "0");
-    if (isNaN(valorConta) || valorConta <= 0) {
-        resultadoOutput.innerHTML = "Insira um valor válido!";
-        return;
-    }
-    const economia = (valorConta * desconto) / 100;
-    const valorFinal = valorConta - economia;
-    resultadoOutput.innerHTML = `
-        <strong>Economia Estimada:</strong> R$ ${economia.toFixed(2)} (${desconto}% de desconto)<br>
-        <strong>Valor Final:</strong> R$ ${valorFinal.toFixed(2)}
-    `;
-}*/
-
 function calcularEconomia() {
-    var valorConta = obterValorConta();
-    var desconto = obterDesconto();
+    const valorConta = obterValorConta();
+    const desconto = obterDesconto();
     if (valorConta <= 0 || desconto === null) {
         exibirErro("Insira um valor válido!");
         return;
     }
-    var economia = calcularValorEconomia(valorConta, desconto);
-    var valorFinal = valorConta - economia;
+    const economia = calcularValorEconomia(valorConta, desconto);
+    const valorFinal = valorConta - economia;
     exibirResultado(economia, desconto, valorFinal);
 }
 function obterValorConta() {
-    var input = document.getElementById("valorConta");
-    return parseFloat(input.value) || 0;
+    const input = document.getElementById("valorConta");
+    return parseFloat(input.value.replace(',', '.')) || 0;
 }
 function obterDesconto() {
-    var select = document.getElementById("cooperativa");
-    var option = select.selectedOptions[0];
+    const select = document.getElementById("cooperativa");
+    const option = select.selectedOptions[0];
     return option ? parseFloat(option.getAttribute("data-desconto") || "0") : null;
 }
 function calcularValorEconomia(valor, desconto) {
     return (valor * desconto) / 100;
 }
 function exibirErro(mensagem) {
-    var resultadoOutput = document.getElementById("resultado");
-    resultadoOutput.innerHTML = "<span style=\"color: red;\">".concat(mensagem, "</span>");
+    const resultadoOutput = document.getElementById("resultado");
+    resultadoOutput.innerHTML = `<span style="color: red;">${mensagem}</span>`;
 }
 function exibirResultado(economia, desconto, valorFinal) {
-    var resultadoOutput = document.getElementById("resultado");
-    resultadoOutput.innerHTML = "\n        <strong>Economia Estimada:</strong> R$ ".concat(economia.toFixed(2), " (").concat(desconto, "% de desconto)<br>\n        <strong>Valor Final:</strong> R$ ").concat(valorFinal.toFixed(2), "\n    ");
+    const resultadoOutput = document.getElementById("resultado");
+    resultadoOutput.innerHTML = `
+        <strong>Economia Estimada:</strong> R$ ${economia.toFixed(2)} (${desconto}% de desconto)<br>
+        <strong>Valor Final:</strong> R$ ${valorFinal.toFixed(2)}
+    `;
 }
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     var _a;
     (_a = document.getElementById("botaoCalcular")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", calcularEconomia);
+    // Aplicação da máscara pode ser feita com uma lib externa no futuro
+    // Aqui só importamos para possível integração
 });
-

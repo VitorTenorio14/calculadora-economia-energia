@@ -20,6 +20,8 @@
     `;
 }
 */
+// src/script.ts
+import { Maskito } from '@maskito/core';
 
 function calcularEconomia(): void {
     const valorConta = obterValorConta();
@@ -29,18 +31,15 @@ function calcularEconomia(): void {
         return;
     }
 
+    const economia = calcularValorEconomia(valorConta, desconto);
+    const valorFinal = valorConta - economia;
 
-const economia = calcularValorEconomia(valorConta, desconto);
-const valorFinal = valorConta - economia;
-
-exibirResultado(economia, desconto, valorFinal);
-
+    exibirResultado(economia, desconto, valorFinal);
 }
 
 function obterValorConta(): number {
     const input = document.getElementById("valorConta") as HTMLInputElement;
-    return  parseFloat(input.value) || 0 ;
-
+    return parseFloat(input.value.replace(',', '.')) || 0;
 }
 
 function obterDesconto(): number | null {
@@ -68,4 +67,7 @@ function exibirResultado(economia: number, desconto: number, valorFinal: number)
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("botaoCalcular")?.addEventListener("click", calcularEconomia);
+
+    // Aplicação da máscara pode ser feita com uma lib externa no futuro
+    // Aqui só importamos para possível integração
 });
