@@ -1,4 +1,4 @@
-function calcularEconomia(): void {
+/*function calcularEconomia(): void {
     const valorContaInput = document.getElementById("valorConta") as HTMLInputElement;
     const cooperativaSelect = document.getElementById("cooperativa") as HTMLSelectElement;
     const resultadoOutput = document.getElementById("resultado") as HTMLElement;
@@ -19,3 +19,4 @@ function calcularEconomia(): void {
         <strong>Valor Final:</strong> R$ ${valorFinal.toFixed(2)}
     `;
 }
+*/
