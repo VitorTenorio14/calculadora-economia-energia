@@ -1,31 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculadora de Economia de Energia</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Economia de Energia</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Calculadora de Economia de Energia</h1>
+    <h1>Calculadora de Economia de Energia</h1>
+    
+    <label for="cep">CEP:</label>
+    <input type="text" id="cep" placeholder="XXXXX-XXX">
+    
+    <label for="valorConta">Valor da Conta de Energia (R$):</label>
+    <input type="number" id="valorConta">
+    
+    <button id="botaoBuscarCooperativas">Buscar Cooperativas</button>
 
-  <label for="cep">CEP:</label>
-  <input type="text" id="cep" placeholder="XXXXX-XXX" maxlength="9" />
+    <div id="cooperativaContainer" style="display: none;">
+        <h2>Cooperativas Disponíveis</h2>
+        <ol id="listaCooperativas"></ol>
+    </div>
 
-  <label for="valorConta">Valor da Conta de Energia (R$):</label>
-  <input type="text" id="valorConta" placeholder="R$ 0,00" />
-
-  <label for="cooperativa">Escolha a Cooperativa:</label>
-  <select id="cooperativa">
-    <option value="coop1" data-desconto="15">Cooperativa A (15% de desconto)</option>
-    <option value="coop2" data-desconto="10">Cooperativa B (10% de desconto)</option>
-  </select>
-
-  <button id="botaoCalcular">Calcular Economia</button>
-
-  <h2>Resultado</h2>
-  <p id="resultado"></p>
-
-  <script src="dist/script.js"></script>
+    <script src="dist/script.js"></script>
 </body>
 </html>
