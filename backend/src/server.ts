@@ -1,0 +1,43 @@
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import tarifasRoutes from './routes/tarifas.routes';
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Health check
+app.get('/health', (req: Request, res: Response) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+// Rotas da API
+app.use('/api/tarifas', tarifasRoutes);
+
+// Rota para calcular economia (mantida para compatibilidade)
+app.post('/api/calcular', (req: Request, res: Response) => {
+  // Esta rota agora está em /api/tarifas/calcular
+  res.status(301).json({ 
+    message: 'Esta rota foi movida. Use POST /api/tarifas/calcular' 
+  });
+});
+
+// Rota 404
+app.use('*', (req: Request, res: Response) => {
+  res.status(404).json({ error: 'Rota não encontrada' });
+});
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Algo deu errado!' });
+});
+
+// Iniciar servidor
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
+  console.log(`📊 API disponível em http://localhost:${PORT}/api/tarifas`);
+});
