@@ -12,4 +12,5 @@ router.get('/:uf', TarifasController.getByUF);
 // POST /api/tarifas/calcular - Calcular economia
 router.post('/calcular', TarifasController.calcularEconomia);
 
+
 export default router;

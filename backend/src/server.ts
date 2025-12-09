@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import tarifasRoutes from './routes/tarifas.routes';
+import calculadoraRoutes from './routes/calculadora-complexa.routes';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,13 +18,8 @@ app.get('/health', (req: Request, res: Response) => {
 // Rotas da API
 app.use('/api/tarifas', tarifasRoutes);
 
-// Rota para calcular economia (mantida para compatibilidade)
-app.post('/api/calcular', (req: Request, res: Response) => {
-  // Esta rota agora está em /api/tarifas/calcular
-  res.status(301).json({ 
-    message: 'Esta rota foi movida. Use POST /api/tarifas/calcular' 
-  });
-});
+// Rotas da API calculadora complexa
+app.use('/api/calculadora', calculadoraRoutes);
 
 // Rota 404
 app.use('*', (req: Request, res: Response) => {

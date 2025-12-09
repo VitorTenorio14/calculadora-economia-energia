@@ -1,18 +1,18 @@
+// tarifa.controller.ts
 import { Request, Response } from 'express';
-import db from '../db';
-import { TarifaRow } from '../models/Tarifa.model';
+import { queryAll, queryGet } from '../db';
+import { 
+  TarifaRow, 
+  CalculoRequest, 
+  CalculoResponse 
+} from '../models/Tarifa.model';
 
 export class TarifasController {
   // Buscar todas as tarifas
   static async getAll(req: Request, res: Response): Promise<void> {
     try {
-      db.all<TarifaRow>('SELECT * FROM tarifas ORDER BY estado', [], (err, rows) => {
-        if (err) {
-          res.status(500).json({ error: err.message });
-          return;
-        }
-        res.json(rows || []);
-      });
+      const rows = await queryAll<TarifaRow>('SELECT * FROM tarifas ORDER BY estado');
+      res.json(rows || []);
     } catch (error) {
       console.error('Erro em getAll:', error);
       res.status(500).json({ error: 'Erro interno do servidor' });
@@ -29,19 +29,14 @@ export class TarifasController {
         return;
       }
       
-      db.get<TarifaRow>('SELECT * FROM tarifas WHERE uf = ?', [uf.toUpperCase()], (err, row) => {
-        if (err) {
-          res.status(500).json({ error: err.message });
-          return;
-        }
-        
-        if (!row) {
-          res.status(404).json({ error: `Tarifa não encontrada para UF: ${uf}` });
-          return;
-        }
-        
-        res.json(row);
-      });
+      const row = await queryGet<TarifaRow>('SELECT * FROM tarifas WHERE uf = ?', [uf.toUpperCase()]);
+      
+      if (!row) {
+        res.status(404).json({ error: `Tarifa não encontrada para UF: ${uf}` });
+        return;
+      }
+      
+      res.json(row);
     } catch (error) {
       console.error('Erro em getByUF:', error);
       res.status(500).json({ error: 'Erro interno do servidor' });
@@ -51,7 +46,7 @@ export class TarifasController {
   // Calcular economia
   static async calcularEconomia(req: Request, res: Response): Promise<void> {
     try {
-      const { uf, consumoMensalKwh, valorContaAtual } = req.body;
+      const { uf, consumoMensalKwh, valorContaAtual }: CalculoRequest = req.body;
       
       // Validação
       if (!uf || uf.length !== 2) {
@@ -69,32 +64,27 @@ export class TarifasController {
         return;
       }
       
-      // Buscar tarifa
-      db.get<TarifaRow>('SELECT * FROM tarifas WHERE uf = ?', [uf.toUpperCase()], (err, row) => {
-        if (err) {
-          console.error('Erro ao buscar tarifa:', err);
-          res.status(500).json({ error: 'Erro ao buscar tarifa' });
-          return;
-        }
-        
-        if (!row) {
-          res.status(404).json({ error: `Tarifa não encontrada para UF: ${uf}` });
-          return;
-        }
-        
-        const tarifa = row.tarifa_kwh;
-        const custoMensalEnergiaLimpa = consumoMensalKwh * tarifa;
-        const economiaMensal = valorContaAtual ? valorContaAtual - custoMensalEnergiaLimpa : 0;
-        const economiaAnual = economiaMensal * 12;
-        
-        res.json({
-          tarifa_kwh: tarifa,
-          custoMensalEnergiaLimpa: Number(custoMensalEnergiaLimpa.toFixed(2)),
-          economiaMensal: Number(Math.max(economiaMensal, 0).toFixed(2)),
-          economiaAnual: Number(Math.max(economiaAnual, 0).toFixed(2)),
-          consumoMensalKwh: Number(consumoMensalKwh)
-        });
-      });
+      const row = await queryGet<TarifaRow>('SELECT * FROM tarifas WHERE uf = ?', [uf.toUpperCase()]);
+      
+      if (!row) {
+        res.status(404).json({ error: `Tarifa não encontrada para UF: ${uf}` });
+        return;
+      }
+      
+      const tarifa = row.tarifa_kwh;
+      const custoMensalEnergiaLimpa = consumoMensalKwh * tarifa;
+      const economiaMensal = valorContaAtual ? valorContaAtual - custoMensalEnergiaLimpa : 0;
+      const economiaAnual = economiaMensal * 12;
+      
+      const response: CalculoResponse = {
+        tarifa_kwh: tarifa,
+        custoMensalEnergiaLimpa: Number(custoMensalEnergiaLimpa.toFixed(2)),
+        economiaMensal: Number(Math.max(economiaMensal, 0).toFixed(2)),
+        economiaAnual: Number(Math.max(economiaAnual, 0).toFixed(2)),
+        consumoMensalKwh: Number(consumoMensalKwh)
+      };
+      
+      res.json(response);
     } catch (error) {
       console.error('Erro em calcularEconomia:', error);
       res.status(500).json({ error: 'Erro interno do servidor' });
