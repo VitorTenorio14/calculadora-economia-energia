@@ -19,6 +19,23 @@ export class TarifasController {
     }
   }
 
+  // Buscar tarifas apenas de UFs que têm distribuidoras
+  static async getComDistribuidoras(req: Request, res: Response): Promise<void> {
+    try {
+      const query = `
+        SELECT DISTINCT t.*
+        FROM tarifas t
+        INNER JOIN distribuidoras d ON t.uf = d.uf
+        ORDER BY t.estado
+      `;
+      const rows = await queryAll<TarifaRow>(query);
+      res.json(rows || []);
+    } catch (error) {
+      console.error('Erro em getComDistribuidoras:', error);
+      res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+  }
+
   // Buscar tarifa por UF
   static async getByUF(req: Request, res: Response): Promise<void> {
     try {

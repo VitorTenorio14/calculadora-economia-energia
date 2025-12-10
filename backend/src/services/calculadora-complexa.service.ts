@@ -54,7 +54,6 @@ export class CalculadoraComplexaService {
     icms: number,
     isentoIcmsTusd: boolean
   ): number {
-    console.log({icms})
     if (isentoIcmsTusd) {
       // Aplica isenção: TUSD / ((1-ICMS)*(1-5%))
       const fatorICMS = 1 - icms;
@@ -110,7 +109,7 @@ export class CalculadoraComplexaService {
         estado.icms,
         isentoIcmsTe
       );
-      
+
       const tarifaTusdAjustada = this.calcularTarifaTusdAjustada(
         distribuidora.tarifa_tusd,
         estado.icms,
@@ -119,8 +118,8 @@ export class CalculadoraComplexaService {
 
       // 4. Calcular tarifas intermediárias
       const tarifaBase = this.calcularTarifaBase(
-        tarifaTeAjustada,
-        tarifaTusdAjustada
+        distribuidora.tarifa_te,
+        distribuidora.tarifa_tusd
       );
 
       const tarifaConsumoFinal = this.calcularTarifaConsumoFinal(

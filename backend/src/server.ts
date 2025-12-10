@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import tarifasRoutes from './routes/tarifas.routes';
 import calculadoraRoutes from './routes/calculadora-complexa.routes';
+import { initializeDatabase } from './db';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,8 +33,24 @@ app.use((err: Error, req: Request, res: Response) => {
   res.status(500).json({ error: 'Algo deu errado!' });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando na porta ${PORT}`);
-  console.log(`📊 API disponível em http://localhost:${PORT}/api/tarifas`);
-});
+// Inicializar banco de dados e depois iniciar servidor
+async function startServer() {
+  try {
+    // Inicializar banco de dados primeiro
+    await initializeDatabase();
+    console.log('✅ Banco de dados inicializado com sucesso');
+
+    // Depois iniciar o servidor
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor rodando na porta ${PORT}`);
+      console.log(`📊 API disponível em http://localhost:${PORT}/api/tarifas`);
+      console.log(`🧮 API Calculadora disponível em http://localhost:${PORT}/api/calculadora`);
+    });
+  } catch (error) {
+    console.error('❌ Erro ao inicializar servidor:', error);
+    process.exit(1);
+  }
+}
+
+// Iniciar o servidor
+startServer();
